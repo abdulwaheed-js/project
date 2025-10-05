@@ -1,0 +1,1578 @@
+
+/* ==========================
+   Premium Navbar + Slider
+   styles.css
+   Save alongside index.html
+   ========================== */
+
+/* Basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+  --nav-height: 120px;
+  --nav-width: 96%;
+  --glass-bg: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.12);
+  --muted: rgba(255,255,255,0.8);
+  --text: #ffffff;
+    --primary-red: #8B0000; /* Dark Red */
+  --silver: #C0C0C0;      /* Silver */
+  --dark-gray: #808080;    /* Dark Gray for accents */
+  --light-gray: #E0E0E0; 
+  --blur-amount: 12px;
+  --accent-shadow: rgba(2,6,23,0.5);
+  --btn-size: 56px;
+}
+/* body
+{
+  perspective: 900px;
+  transform-style: preserve-3d;
+} */
+/* Body + background */
+html,body { height: 100%; }
+body {
+  font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background-image: url(/pic/a.jpg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+}
+
+/* ===== NAVBAR ===== */
+.site-header {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 6px;
+}
+
+/* main nav container (also used by shimmer pseudo) */
+.nav {
+  width: var(--nav-width);
+  height: var(--nav-height);
+  display: flex;
+  color: var(--silver);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-radius: 18px;
+  /* background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); */
+  background-image: 
+    /* linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.12) 100%), */
+    url(/pic/s.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  backdrop-filter: saturate(130%) blur(6px);
+  -webkit-backdrop-filter: saturate(130%) blur(6px);
+  position: relative; /* for shimmer */
+  overflow: hidden;
+  z-index: 40;
+}
+
+
+/* Brand */
+.brand {
+  color: var(--silver);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: transform .25s ease;
+  z-index: 2; /* on top of shimmer */
+}
+.brand:hover { transform: translateY(-3px); }
+
+/* Nav list */
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 16px;
+  align-items: center;
+  z-index: 2; /* above shimmer */
+}
+
+/* nav link baseline */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 22px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  transition: transform .28s cubic-bezier(.2,.9,.3,1), color .22s ease, box-shadow .28s ease;
+  position: relative;
+  isolation: isolate;
+  will-change: transform;
+}
+
+/* hovered / focused link gets glass */
+.nav-link.hovered,
+.nav-link:focus,
+.nav-link:hover {
+  color: #fff;
+  height: 60px;
+  font-size: 1.2rem;
+  background: rgba(59, 1, 1, 0.08);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--blur-amount)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(160%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transform: translateY(-4px);
+  z-index: 3;
+}
+
+/* glossy sheen on hovered link */
+.nav-link::before{
+  content: "";
+  position: absolute;
+  left: -70%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, rgba(43, 1, 1, 0.06), rgba(255,255,255,0.22) 40%, rgba(255,255,255,0.06));
+  opacity: 0;
+  transition: transform .6s cubic-bezier(.2,.9,.3,1), opacity .24s ease;
+  filter: blur(6px);
+  border-radius: 12px;
+  pointer-events: none;
+}
+.nav-link.hovered::before, .nav-link:hover::before { opacity: 1; transform: translateX(180%) skewX(-18deg); }
+
+/* when a link is in focus state (via JS) blur others */
+.nav.focus-active .nav-link {
+  transition: filter .28s ease, opacity .28s ease, transform .28s ease;
+}
+.nav.focus-active .nav-link:not(.hovered) {
+  filter: blur(3px);
+  opacity: 0.42;
+  transform: scale(0.98);
+  z-index: 1;
+}
+/* brand hover blurs links too (JS also handles but keep CSS fallback) */
+.brand:hover ~ .nav-list .nav-link {
+  filter: blur(3px);
+  opacity: 0.42;
+  transform: scale(0.98);
+}
+
+/* ===== NAVBAR SHIMMER (one-time) ===== */
+.nav::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(120deg,
+    rgba(59, 0, 0, 0.04) 0%,
+    rgba(126, 6, 1, 0.534) 50%,
+    rgba(204, 175, 175, 0.04) 100%);
+  filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity .45s ease;
+}
+
+/* Plays once per hover, stops near center */
+.nav:hover::after {
+  opacity: 1;
+  animation: glossyOneTime 2.9s ease forwards;
+}
+
+/* One-time shimmer keyframes */
+@keyframes glossyOneTime {
+  0%   { transform: translateX(-30%); opacity: 0.08; }
+  40%  { transform: translateX(-4%); opacity: 1; }
+  100% { transform: translateX(10%); opacity: 0.7; }
+}
+
+/* ===== SLIDER ===== */
+.slider-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 28px 0 80px;
+}
+.slider-wrapper {
+  width: min(1630px, 96%); /* Increased by 30% from 1100px to 1430px */
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(46, 52, 78, 0.6);
+}
+
+/* slides container & slide sizing */
+.slides {
+  display: flex;
+  width: 300%; /* 3 slides horizontally */
+  transition: transform .8s cubic-bezier(.2,.9,.3,1);
+  transform: translateX(0);
+}
+
+/* === Enhanced slide width with background image support === */
+.slide {
+  width: 100%; /* This makes each slide take full width of the slider */
+  height: 700px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  transition: transform 1s ease-in-out;
+  position: relative;
+}
+
+/* ===== FIXED: Working blur effect ===== */
+
+/* the blur overlay (invisible by default) */
+.blur-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* active blur state */
+.blur-overlay.active {
+  opacity: 1;
+}
+
+/* The currently hovered slide should never be blurred and should be above blur */
+.slide {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.5s cubic-bezier(.2,.9,.3,1);
+}
+
+.slide:hover {
+  z-index: 10;
+  transform: scale(1.03);
+}
+
+/* === Stronger, more noticeable bounce text animations === */
+.slide.active .from-left { 
+  transform: translateX(0); 
+  animation: bounceFromLeft 1.2s cubic-bezier(.2,.9,.3,1); 
+}
+.slide.active .from-right { 
+  transform: translateX(0); 
+  animation: bounceFromRight 1.2s cubic-bezier(.2,.9,.3,1); 
+}
+.slide.active .from-top { 
+  transform: translateY(0); 
+  animation: bounceFromTop 1.2s cubic-bezier(.2,.9,.3,1); 
+}
+.slide.active .from-bottom { 
+  transform: translateY(0); 
+  animation: bounceFromBottom 1.2s cubic-bezier(.2,.9,.3,1); 
+}
+
+/* smoother bounce feel */
+@keyframes bounceFromLeft {
+  0%   { transform: translateX(-140%); opacity: 0; }
+  60%  { transform: translateX(10%); opacity: 1; }
+  80%  { transform: translateX(-3%); }
+  100% { transform: translateX(0); }
+}
+@keyframes bounceFromRight {
+  0%   { transform: translateX(140%); opacity: 0; }
+  60%  { transform: translateX(-10%); opacity: 1; }
+  80%  { transform: translateX(3%); }
+  100% { transform: translateX(0); }
+}
+@keyframes bounceFromTop {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  60%  { transform: translateY(8%); opacity: 1; }
+  80%  { transform: translateY(-3%); }
+  100% { transform: translateY(0); }
+}
+@keyframes bounceFromBottom {
+  0%   { transform: translateY(100%); opacity: 0; }
+  60%  { transform: translateY(-8%); opacity: 1; }
+  80%  { transform: translateY(3%); }
+  100% { transform: translateY(0); }
+}
+
+
+/* ===== SLIDER BUTTONS ===== */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 999px;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: rgba(255,255,255,0.03);
+  box-shadow: 0 8px 20px rgba(2,6,23,0.6);
+  z-index: 5;
+  transition: transform .18s ease, box-shadow .24s ease;
+  backdrop-filter: saturate(120%) blur(4px);
+  -webkit-backdrop-filter: saturate(120%) blur(4px);
+  overflow: visible;
+}
+
+/* left / right pos */
+.slider-btn.prev { left: 18px; }
+.slider-btn.next { right: 18px; }
+
+/* arrow inner - keeps arrow crisp on hover */
+.btn-inner {
+  position: relative;
+  z-index: 3;
+  color: #eaf2ff;
+  display: grid;
+  place-items: center;
+}
+
+/* glossy pseudo-layer for button (arrow stays crisp) */
+.slider-btn::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.12));
+  filter: blur(6px);
+  opacity: 0;
+  transition: opacity .25s ease, transform .18s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* on hover show glossy layer but arrow remains above */
+.slider-btn:hover::before { opacity: 1; transform: scale(1.02); }
+
+/* button pressed animation when clicked */
+.slider-btn.pressing {
+  transform: translateY(2px) scale(.98);
+  transition: transform .12s ease;
+}
+
+/* keep arrow stroke strong on all backgrounds */
+.slider-btn svg { color: rgba(8,12,22,0.95); stroke: currentColor; }
+
+/* small responsiveness */
+@media (max-width: 880px) {
+  .title.big { font-size: 2.2rem; }
+  .slider-btn { width: 48px; height: 48px; }
+}
+@media (max-width: 520px) {
+  .slides { flex-wrap: nowrap; }
+  .title.big { font-size: 1.6rem; }
+  .slide { min-height: 56vh; }
+  .nav { padding: 0 12px; border-radius: 12px; }
+}
+/* ---------------------------
+   Center slide text + sizes
+   (Paste this at the end of your styles.css)
+   --------------------------- */
+
+/* ===== Center slide text cleanly in the middle of image ===== */
+.slide-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  padding: 20px;
+  z-index: 2;
+  color: #fff;
+}
+
+/* Make main heading large and visible */
+.title.big {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  opacity: 1;                /* visible by default */
+  transform: translateY(0);  /* ensures it's not pushed away */
+}
+
+/* Normal readable description */
+.desc {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.9);
+  opacity: 1;                /* visible by default */
+  transform: translateY(0);
+}
+
+/* Keep bounce animations functional (restore visibility after animation) */
+.slide.active .title.big,
+.slide.active .desc {
+  opacity: 1;
+}
+/* ===== Fix: Center text individually for each slide ===== */
+.slide {
+  position: relative; /* ensures slide-content stays inside each slide */
+  overflow: hidden;
+}
+
+/* center text for each image, not all together */
+.slide .slide-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  padding: 20px;
+  z-index: 2;
+  color: #fff;
+}
+
+/* each image's title + desc animations and visibility */
+.slide .title.big {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.slide .desc {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.9);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+/* when slide becomes active, reveal its text only */
+.slide.active .title.big,
+.slide.active .desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* ===== FIXED: Global blur that excludes hovered image ===== */
+
+/* the blur overlay (invisible by default) */
+.blur-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1; /* Lower z-index so slides can be above it */
+}
+
+/* active blur state */
+.blur-overlay.active {
+  opacity: 1;
+}
+
+/* When blur is active, apply blur to the entire page EXCEPT hovered elements */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  z-index: 1;
+  pointer-events: none;
+  transition: backdrop-filter 0.4s ease;
+}
+
+/* When any slide is hovered, blur the entire page background */
+.slide:hover ~ *,
+body:has(.slide:hover) .blur-overlay {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* The currently hovered slide should never be blurred and should be above blur */
+.slide {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.5s cubic-bezier(.2,.9,.3,1);
+}
+
+.slide:hover {
+  z-index: 10;
+  transform: scale(1.03);
+}
+/* Ensure body can have backdrop filter */
+body {
+  position: relative;
+}
+
+/* Make sure slides can appear above blur */
+.slide {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.5s cubic-bezier(.2,.9,.3,1);
+}
+
+.slide:hover {
+  z-index: 10;
+  transform: scale(1.03);
+}
+
+/* Remove the filter rules since we're using backdrop-filter instead */
+
+
+
+
+
+
+
+
+
+
+
+
+/* new work started */
+
+
+@import url('https://fonts.googleapis.com/css?family=Exo:700');
+@import url('https://fonts.googleapis.com/css?family=Abel');
+
+.title{
+  width:100%;
+  text-align: center;
+}
+.title h1{
+  font-size:50px;
+  font-family: 'Exo', sans-serif;
+}
+@import url('https://fonts.googleapis.com/css?family=Exo:700');
+@import url('https://fonts.googleapis.com/css?family=Abel');
+
+body {
+  /* background-color: #dfe6e9; */
+  perspective: 1000px;
+  font-family: 'Abel', sans-serif;
+}
+
+.title {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.title h1 {
+  font-size: 50px;
+  font-family: 'Exo', sans-serif;
+}
+
+/* Card container */
+.tour {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  margin-top: 80px;
+  perspective: 1200px;
+}
+
+/* Common card style */
+.card {
+  width: 250px;
+  height: 350px;
+  text-align: center;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  transition: all 0.6s ease;
+  transform: rotateX(60deg) translateY(-100px);
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Glossy overlay */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg,
+    rgba(255,255,255,0.15) 0%,
+    rgba(255,255,255,0.45) 25%,
+    rgba(255,255,255,0.1) 100%);
+  opacity: 0;
+  transform: translateX(-100%) skewX(-15deg);
+  transition: all 1s ease;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.card:hover::before {
+  opacity: 1;
+  transform: translateX(100%) skewX(-15deg);
+}
+
+/* Individual colors */
+.card1 { background: linear-gradient(135deg, #e1963a, #e3905b); }
+.card2 { background: linear-gradient(135deg, #5d5eaa, #5d4267); }
+.card3 { background: linear-gradient(135deg, #ff5252, #b33939); }
+.card4 { background: linear-gradient(135deg, #3dc1d3, #2c82c9); }
+
+.card img {
+  margin-top: 20px;
+  width: 200px;
+  height: 130px;
+  border-radius: 10px;
+}
+
+.card h3 {
+  font-size: 25px;
+  color: #fff;
+  text-shadow: 0 0 3px rgba(255,255,255,0.6);
+}
+
+.card p {
+  color: white;
+  padding: 0 15px;
+  font-size: 14px;
+}
+
+/* Hover effects */
+.card:hover {
+  transform: rotateX(0deg) scale(1.2) translateY(-40px);
+  z-index: 10;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+
+/* When hovering over one card, blur others */
+.tour:hover .card {
+  filter: blur(4px) brightness(0.7);
+  transform: rotateX(60deg) translateY(-100px);
+}
+
+.tour .card:hover {
+  filter: none;
+  transform: rotateX(0deg) scale(1.2) translateY(-40px);
+  z-index: 20;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 120px;
+}
+
+.footer h2 {
+  font-size: 18px;
+  font-family: 'Exo', sans-serif;
+  color: #555;
+}
+/* Glossy button inside card */
+.glossy-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+/* Glossy shine effect on hover */
+.glossy-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  transition: all 0.5s ease;
+}
+
+.glossy-btn:hover::before {
+  left: 130%;
+}
+
+.glossy-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.1));
+  box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+@keyframes colorful {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes colorful {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  padding: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  transition: all 0.5s ease;
+}
+
+.card {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(25px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.6s ease;
+  cursor: pointer;
+  transform: scale(1);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center; /* Center align content */
+}
+
+/* Glossy shine overlay */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 100%);
+  opacity: 0;
+  transform: translateX(-100%) skewX(-15deg);
+  transition: all 1s ease;
+  mix-blend-mode: screen;
+}
+
+.card:hover::before {
+  opacity: 1;
+  transform: translateX(100%) skewX(-15deg);
+}
+
+/* Center content properly */
+.card .content {
+  opacity: 0.7;
+  transition: 0.5s;
+  text-align: center;
+  width: 100%;
+}
+
+/* Image styling */
+.card .img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 8px solid rgba(255,255,255,0.1);
+  transition: all 0.6s ease;
+}
+
+.card .img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.6s ease;
+}
+
+/* Text */
+.card h3 {
+  text-transform: uppercase;
+  margin-top: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.card h3 span {
+  display: block;
+  font-size: 12px;
+  font-weight: 300;
+  text-transform: none;
+  opacity: 0.8;
+}
+
+.sci {
+  position: absolute;
+  bottom: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.5s ease;
+}
+
+.sci li {
+  transition-delay: calc(0.1s * var(--i));
+}
+
+.sci li a {
+  font-size: 22px;
+}
+
+/* Hover interaction */
+.card:hover .content {
+  opacity: 1;
+  transform: translateY(-10px);
+}
+
+.card:hover .sci {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* POP-UP + BLUR EFFECTS */
+.container:hover .card {
+  filter: blur(4px) brightness(0.6);
+  transform: scale(0.9);
+  z-index: 1;
+}
+
+.container .card:hover {
+  filter: none;
+  transform: scale(1.15) translateY(-20px);
+  z-index: 10;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+
+/* IMAGE GROW AND RADIUS CHANGE */
+.card:hover .img {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  border: none;
+}
+
+.card:hover .img img {
+  object-fit: cover;
+  transform: scale(1.05);
+  border-radius: 20px;
+}
+
+/* Smooth glossy shine animation */
+.card:hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%);
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  animation: glossyMove 2s ease forwards;
+}
+
+@keyframes glossyMove {
+  0% { transform: translateX(-100%) skewX(-20deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(100%) skewX(-20deg); opacity: 0; }
+}
+/* === Fix: Center content perfectly === */
+.container .card .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.7;
+  transition: 0.5s ease;
+}
+
+/* === Smooth hover pop + focus blur === */
+.container:hover .card {
+  filter: blur(4px) brightness(0.7);
+  transform: scale(1) translateY(0);
+  transition: 0.5s ease;
+}
+
+.container .card:hover {
+  transform: scale(1.1) translateY(-20px);
+  filter: none;
+  z-index: 10;
+}
+
+/* === Image hover grow & shape change === */
+.container .card .content .img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.container .card:hover .content .img {
+  transform: scale(1.5);
+  border-radius: 20px; /* same as card corners */
+}
+
+/* Ensure the image stays inside the card */
+.container .card {
+  overflow: hidden;
+}
+/* Hide text when hovered */
+.container .card:hover .cardContent {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
+}
+
+/* Make sure it shows again when not hovered */
+.container .card .cardContent {
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+/* Optional smoother image zoom effect */
+.container .card .content .img {
+  transition: all 0.6s ease;
+}
+
+.container .card:hover .content .img {
+  transform: scale(1.5);
+  border-radius: 20px;
+}
+
+/* === Bright glossy color upgrade (non-destructive) === */
+
+/* Softer gradient background */
+body {
+  /* background: radial-gradient(circle at 20% 20%, #6fa3ff 0%, #0b1228 50%, #4a7bd6 100%); */
+   /* background: radial-gradient(circle at 25% 25%, #1a1818 0%, #be7676 60%, #4b4a4a 100%); */
+  color: #f5f7ff;
+}
+
+/* Navbar & glass areas */
+.nav {
+  /* background: linear-gradient(180deg, rgba(8, 7, 7, 0.08), rgba(5, 0, 0, 0.03)); */
+  background-color: #071024 ;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 8px 40px rgba(0, 50, 130, 0.4);
+}
+
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.12);
+  color: #fff;
+  box-shadow: 0 6px 25px rgba(100, 170, 255, 0.35);
+}
+
+/* Cards */
+.card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+  color: #f7faff;
+}
+
+/* Card hover pop with subtle light glow */
+.container .card:hover {
+  box-shadow: 0 20px 60px rgba(100, 160, 255, 0.45);
+}
+
+/* Card titles */
+.card h3 {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(150, 200, 255, 0.6);
+}
+
+/* Card paragraph */
+.card p {
+  color: rgba(240, 245, 255, 0.9);
+}
+
+/* Glossy button */
+.glossy-btn {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.glossy-btn:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.15));
+  box-shadow: 0 0 20px rgba(100,160,255,0.45);
+}
+
+/* Footer */
+.footer h2 {
+  color: rgba(230, 235, 255, 0.8);
+}
+.imageoutside
+{
+  padding: 10px;
+  text-align: center;
+  margin-left: 300px;
+}
+.imageinside
+{
+  padding: 10px;
+  text-align: center;
+  width: 150px;
+  height: 110px;
+  left: 100px;
+}
+
+
+
+
+/* ========== Gallery Container Only ========== */
+.gallery-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-image: url(/pic/ios-13-stock-ipados-red-black-background-amoled-hd-3208x3208-799.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  padding: 48px 24px;
+  /* background: radial-gradient(circle at 10% 10%, #1b1b1e 0%, #0f0f10 30%, #121214 100%); */
+  color: #eef3ff;
+}
+
+/* Gallery grid */
+.gallery-section .gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  width: 90%;
+  /* background-image: url(/pic/x.jpg); */
+
+  max-width: 1200px;
+}
+
+@media (max-width: 920px) {
+  .gallery-section .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .gallery-section .gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card styling */
+.gallery-section .img-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  transition: transform 420ms cubic-bezier(.2,.9,.3,1), filter 420ms, box-shadow 420ms;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.gallery-section .img-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 420ms ease, border-radius 420ms ease, filter 420ms ease;
+  border-radius: 18px;
+}
+
+.gallery-section .meta {
+  padding: 12px;
+  color: rgba(240,245,255,0.95);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Glossy Learn More Button */
+.gallery-section .learn-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 22px;
+  font-size: 16px;
+  color: white;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1), inset 0 1px 4px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.gallery-section .img-card:hover .learn-btn {
+  opacity: 1;
+  transform: translate(-50%, -5px);
+}
+
+.gallery-section .learn-btn:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.15));
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3), inset 0 1px 6px rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -8px);
+}
+
+/* Focused Card (JS controlled) */
+.gallery-section .img-card.focused {
+  transform: scale(1.28);
+  z-index: 40;
+  box-shadow: 0 40px 100px rgba(2,8,40,0.7);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.gallery-section .img-card.focused img {
+  transform: scale(1.08);
+  border-radius: 12px;
+}
+
+.gallery-section .img-card.focused .learn-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Blur non-focused */
+.gallery-section .gallery.active .img-card:not(.focused) {
+  filter: blur(6px) brightness(0.6);
+  transform: scale(0.98);
+}
+
+/* Subtle lift effect for idle cards */
+.gallery-section .img-card:not(.focused):hover {
+  transform: translateY(-6px) scale(1.03);
+}
+
+/* Responsive tweaks */
+@media (max-width: 920px) {
+  .gallery-section .img-card img { height: 200px; }
+}
+@media (max-width: 560px) {
+  .gallery-section .img-card img { height: 180px; }
+}
+.h1text
+{
+  margin-top: 50px;
+  text-align: center;
+
+
+}
+
+
+/* Section layout */
+sectionss {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: co; */
+  /* flex-wrap: wrap; */
+  padding: 20px;
+  gap: 40px;
+}
+
+ffh1 {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: Arial, sans-serif;
+}
+
+/* Card styling */
+.card23 {
+  position: relative;
+  width: 40%; /* ~50% of screen */
+  overflow: hidden;
+  left: 100px;
+  height: 500px;
+  gap: 40px;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.card23 img {
+  width: 100%;
+
+  display: block;
+  border-radius: 15px;
+  /* Glossy effect */
+  box-shadow: inset 0 0 60px rgba(255,255,255,0.2);
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.card23:hover img {
+  transform: scale(1.05);
+}
+
+/* Learn More button */
+.learn-more {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #333;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.card23:hover .learn-more {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+  pointer-events: auto;
+}
+
+/* Glossy shine overlay */
+.card23::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+  transform: rotate(25deg);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.card23:hover::after {
+  top: -70%;
+  left: -70%;
+}
+.cardinfo
+{
+  gap: 30px;
+  margin: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+#cardmid
+{
+  margin-left: 900px;
+}
+.publictxt
+{
+  margin-left: 900px;
+}
+.public
+{
+  margin-left: 900px;
+
+}
+.first
+{
+  display: flex;
+  flex-direction: row;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* new work started */
+
+
+
+
+
+/* ---------- PREMIUM GLOSSY FOOTER ---------- */
+.premium-footer {
+  position: relative;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+  margin-top: 60px;
+}
+
+.footer-glass {
+  background: rgba(39, 1, 1, 0.9);
+  border-radius: 20px;
+  padding: 60px 40px 30px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glossy animated shine overlay */
+.footer-glass::before {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.15) 100%);
+  transform: rotate(25deg);
+  animation: shine 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { transform: rotate(25deg) translate(-300%, -300%); }
+  100% { transform: rotate(25deg) translate(300%, 300%); }
+}
+
+/* Footer container layout */
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Animated Glossy Text ---------- */
+.glossy-text {
+  font-weight: 700;
+  color: #fff;
+  font-size: 26px;
+  position: relative;
+  display: inline-block;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #fff, #1e90ff, #fff);
+  background-size: 200% 100%;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 3s linear infinite;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+}
+
+@keyframes textShine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* About / Branding */
+.footer-about h2 {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.footer-about p {
+  font-size: 16px;
+  color: #ddd;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: fadeInUp 1s forwards 0.3s;
+}
+
+.footer-links h3,
+.footer-social h3,
+.footer-newsletter h3 {
+  font-size: 20px;
+  margin-bottom: 14px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  opacity: 0;
+  animation: fadeInUp 1s forwards 0.5s;
+}
+
+/* Link animations */
+.footer-links a {
+  font-size: 16px;
+  color: #ccc;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 8px;
+  position: relative;
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+}
+
+.footer-links a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: #1e90ff;
+  transition: width 0.3s;
+}
+
+.footer-links a:hover::after {
+  width: 100%;
+}
+
+.footer-links a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(30,144,255,0.8);
+}
+
+/* Social Icons */
+.footer-social .social-icons a {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 15px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  color: #ccc;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 0.4s;
+  opacity: 0;
+  animation: fadeInUp 1s forwards 0.8s;
+}
+
+.footer-social .social-icons a:hover {
+  color: #fff;
+  background: rgba(30,144,255,0.3);
+  box-shadow: 0 0 12px rgba(30,144,255,0.7);
+  transform: scale(1.15);
+}
+
+/* Newsletter */
+.footer-newsletter p {
+  font-size: 16px;
+  color: #ddd;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeInUp 1s forwards 1s;
+}
+
+.footer-newsletter input[type="email"] {
+  font-size: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.footer-newsletter button {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #1e90ff, #00ffff);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.4s;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
+
+.footer-newsletter button:hover {
+  background: linear-gradient(90deg, #00ffff, #1e90ff);
+  box-shadow: 0 0 15px rgba(30,144,255,0.8);
+  transform: scale(1.05);
+}
+
+/* Footer Bottom Bar */
+.footer-bottom {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 15px;
+  color: #bbb;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 15px;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 1s forwards 1.2s;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-newsletter form {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+
+
+
+
+
+
+
+
+/* final work */
+
+
+
+
+
+/* Add gap between footer sections */
+.footer-about,
+.footer-links,
+.footer-social,
+.footer-newsletter {
+  margin-bottom: 30px; /* adds vertical spacing between sections */
+}
+
+/* Increase font sizes slightly for better readability */
+.footer-about h2 {
+  font-size: 36px; /* bigger heading */
+}
+
+.footer-about p {
+  font-size: 18px; /* slightly larger paragraph */
+}
+
+.footer-links h3,
+.footer-social h3,
+.footer-newsletter h3 {
+  font-size: 22px; /* slightly larger section titles */
+}
+
+.footer-links a,
+.footer-social .social-icons a,
+.footer-newsletter p,
+.footer-newsletter input[type="email"],
+.footer-newsletter button {
+  font-size: 17px; /* slightly larger for all interactive text and elements */
+}
+
+.footer-bottom {
+  font-size: 16px; /* slightly bigger bottom text */
+}
