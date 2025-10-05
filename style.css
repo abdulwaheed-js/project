@@ -31,7 +31,7 @@
 html,body { height: 100%; }
 body {
   font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background-image: url(/pic/a.jpg);
+  background-image: url(pic/a.jpg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -58,7 +58,7 @@ body {
   /* background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); */
   background-image: 
     /* linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.12) 100%), */
-    url(/pic/s.jpg);
+    url(pic/s.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
@@ -1040,7 +1040,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background-image: url(/pic/ios-13-stock-ipados-red-black-background-amoled-hd-3208x3208-799.jpg);
+  background-image: url(pic/ios-13-stock-ipados-red-black-background-amoled-hd-3208x3208-799.jpg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
